@@ -53,6 +53,22 @@ angular
             })
             .datetimepicker(options);
 
+ $scope.$watch(
+                function () {
+                    return ngModelCtrl.$modelValue;
+                }, function (newValue, oldValue) {
+                    console.log('in datepicker model value changed...', newValue, oldValue);
+                    if (typeof newValue === "undefined") {
+                        if (oldValue != null) {
+                            $element[0].value = null;
+                        }
+                    } else {
+                        $element[0].value = newValue;
+                    }
+                   
+                    //ngModelCtrl.$viewValue = newValue;
+                }, true);
+
           function setPickerValue() {
             var date = options.defaultDate || null;
 
