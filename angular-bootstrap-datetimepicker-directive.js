@@ -4,19 +4,19 @@ angular
   .module('datetimepicker', [])
 
   .provider('datetimepicker', function () {
-    var default_options = {};
+      var default_options = {};
 
-    this.setOptions = function (options) {
-      default_options = options;
-    };
-
-    this.$get = function () {
-      return {
-        getOptions: function () {
-          return default_options;
-        }
+      this.setOptions = function (options) {
+          default_options = options;
       };
-    };
+
+      this.$get = function () {
+          return {
+              getOptions: function () {
+                  return default_options;
+              }
+          };
+      };
   })
 
   .directive('datetimepicker', [
@@ -25,35 +25,36 @@ angular
     function ($timeout,
               datetimepicker) {
 
-      var default_options = datetimepicker.getOptions();
+        var default_options = datetimepicker.getOptions();
 
-      return {
-        require : '?ngModel',
-        restrict: 'AE',
-        scope   : {
-          datetimepickerOptions: '@'
-        },
-        link    : function ($scope, $element, $attrs, ngModelCtrl) {
-          var passed_in_options = $scope.$eval($attrs.datetimepickerOptions);
-          var options = jQuery.extend({}, default_options, passed_in_options);
+        return {
+            require: '?ngModel',
+            restrict: 'AE',
+            scope: {
+                datetimepickerOptions: '@'
+            },
+            link: function ($scope, $element, $attrs, ngModelCtrl) {
+                var passed_in_options = $scope.$eval($attrs.datetimepickerOptions);
+                var options = jQuery.extend({}, default_options, passed_in_options);
 
-          var datePickerElement = $element.parent().hasClass('input-group') ? $element.parent() : $element;
+                var datePickerElement = $element.parent().hasClass('input-group') ? $element.parent() : $element;
 
-          datePickerElement
-            .on('dp.change', function (e) {
-              if (ngModelCtrl) {
-                $timeout(function () {
-                  if (options.inline) {
-                    e.target.value = e.date;
-                  }
-                  ngModelCtrl.$setViewValue($element[0].value);
-                  ngModelCtrl.$commitViewValue();
-                });
-              }
-            })
-            .datetimepicker(options);
+                //$element
+                datePickerElement
+                  .on('dp.change', function (e) {
+                      if (ngModelCtrl) {
+                          $timeout(function () {
+                              if (options.inline) {
+                                  e.target.value = e.date;
+                              }
+                              ngModelCtrl.$setViewValue($element[0].value);
+                              ngModelCtrl.$commitViewValue();
+                          });
+                      }
+                  })
+                  .datetimepicker(options);
 
- $scope.$watch(
+                $scope.$watch(
                 function () {
                     return ngModelCtrl.$modelValue;
                 }, function (newValue, oldValue) {
@@ -69,26 +70,34 @@ angular
                     //ngModelCtrl.$viewValue = newValue;
                 }, true);
 
-          function setPickerValue() {
-            var date = options.defaultDate || null;
+                function setPickerValue() {
+                    var date = null;
 
-            if (ngModelCtrl && ngModelCtrl.$viewValue) {
-              date = ngModelCtrl.$viewValue;
+                    if (ngModelCtrl && ngModelCtrl.$viewValue) {
+                        date = ngModelCtrl.$viewValue;
+                    }
+                    if (angular.isDate(date)) {
+                        datePickerElement
+                            .data('DateTimePicker')
+                            .date(date);
+                    } else {
+                        if (date == null) {
+                            datePickerElement
+                           .data('DateTimePicker')
+                           .date(date);
+                        }
+                    }
+
+                }
+
+                if (ngModelCtrl) {
+                    ngModelCtrl.$render = function () {
+                        setPickerValue();
+                    };
+                }
+
+                setPickerValue();
             }
-
-            $element
-              .data('DateTimePicker')
-              .date(date);
-          }
-
-          if (ngModelCtrl) {
-            ngModelCtrl.$render = function () {
-              setPickerValue();
-            };
-          }
-
-          setPickerValue();
-        }
-      };
+        };
     }
   ]);
