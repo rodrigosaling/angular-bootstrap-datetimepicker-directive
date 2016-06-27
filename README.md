@@ -2,6 +2,21 @@
 
 A wrapper directive around the [bootstrap-datetimepicker component](http://eonasdan.github.io/bootstrap-datetimepicker/).
 
+## Important notes
+
+This is a fork from [aselby's fork](https://github.com/aselby/angular-bootstrap-datetimepicker-directive). I think I successfully made it work with `.input-group`, Angular's input validators and the ability to type the date before the library parser changes it.
+
+The datepicker options that I am using are the following:
+
+	vm.options = {
+		format: 'MM/DD/YYYY', 
+		allowInputToggle: false,
+		keyBinds: {'delete':null},
+		focusOnShow: false
+	};
+	
+The rest of this README.md document is unchanged.
+
 ## How to Use
 
 1- Install the directive via bower (or download it manually, as you prefer)
